@@ -55,6 +55,11 @@ const Message = sequelize.define('Message', {
     allowNull: false,
     defaultValue: AI_TYPE_TEXT,
   },
+  prompt: {
+    type: DataTypes.STRING(4096),
+    allowNull: true,
+    defaultValue: null,
+  }
 });
 
 // 数据库初始化方法

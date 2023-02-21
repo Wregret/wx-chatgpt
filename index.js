@@ -140,17 +140,40 @@ async function getAIMessage({ Content, FromUserName }) {
 
   if (aiType === AI_TYPE_TEXT) {
     // 构建带上下文的 prompt
-    const prompt = await buildCtxPrompt({ Content, FromUserName });
-
+    const customized_prompt = await buildCtxPrompt({ Content, FromUserName });
     // 请求远程消息
-    response = await getAIResponse(prompt);
+    response = await getAIResponse(customized_prompt);
+    // 更新prompt
+    await Message.update(
+      {
+        prompt: customized_prompt
+      },
+      {
+        where: {
+          fromUser: FromUserName,
+          request: Content,
+        },
+      },
+    );
   }
 
   if (aiType === AI_TYPE_IMAGE) {
     // 去掉开始前的关键词
-    const prompt = Content.substring(AI_IMAGE_KEY.length);
+    const customized_prompt = Content.substring(AI_IMAGE_KEY.length);
     // 请求远程消息
-    response = await getAIIMAGE(prompt);
+    response = await getAIIMAGE(customized_prompt);
+    // 更新prompt
+    await Message.update(
+      {
+        prompt: customized_prompt
+      },
+      {
+        where: {
+          fromUser: FromUserName,
+          request: Content,
+        },
+      },
+    );
   }
 
   // 成功后，更新记录
